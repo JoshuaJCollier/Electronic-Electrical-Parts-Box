@@ -12,6 +12,9 @@ Provide the name of a part and an amount, it will add that amount of that thing 
 Take:
 Provide the name of a part and an amount, it will take that amount of that thing from the spreadsheet. (Will light up that slot in a particular colour not sure yet, maybe red)
 
+Swap:
+Provide the name of two parts, and the position of them will swap in the spreadsheet. (Will light up the slots that have moved in blue)
+
 Other things:
 - It will keep track of how much of everything there is
 - Passive light cycling when it is not in use
