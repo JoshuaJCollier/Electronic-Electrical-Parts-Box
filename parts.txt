@@ -1,0 +1,8 @@
+resistor20ohm:40,resistor:144,RGB_LED:190,Blue_LED:200,Yellow_LED:200,Green_LED:200,Purple_LED:200,Red_LED:200
+N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
+N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
+N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
+N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
+N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
+N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
+N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
