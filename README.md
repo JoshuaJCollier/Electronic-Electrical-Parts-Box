@@ -1,7 +1,7 @@
 # Electronic-Electrical-Parts-Box
 Code to run for keeping track of and finding electronic parts in my parts box
 
-Currently its job is to take an input in a webformat, from my ip port 25000, with requests of either find, add or take.
+Currently its job is to take an input in a webformat, from any ip port 25000, with requests of either find, add or take.
 
 Find:
 Provide the name of a part and it will return the position in the box of that particular part, and eventually it will light up that part of the box
