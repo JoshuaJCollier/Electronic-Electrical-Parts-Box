@@ -5,6 +5,7 @@ import time
 import re
 from gpiozero import LED
 
+# Initialising Pins
 # 0 is serial, 1 is clock, 2 is latch
 red = [LED(2), LED(3), LED(4)]
 green = [LED(17), LED(27), LED(22)]
@@ -98,6 +99,34 @@ def buildTable():
 
     return returnTable
 
+# RGB values are 8x8 list of 0s and 1s
+def updateShiftRegisters(r, g, b):
+    allColours = [red, green, blue, ground]
+    for i in range(4):
+        allColours[i][2].off() # Turn all latch low
+    
+    for i in range(8):
+        allColours[3][1].on() # Turn ground clock high
+        allColours[3][0].on() # Turn ground serial high
+            
+        for j in range(8):
+            
+            for k in range(3): # Only for RGB
+                allColours[k][1].on() # Turn colour clock high
+                if (r[i][j] == 1):
+                    allColours[k][0].on() # Turn colour serial high
+                else if (r[i][j] == 0):
+                    allColours[k][0].off() # Turn colour serial low
+
+            time.sleep(0.1) # Bit of a rest
+            for k in range(3):
+                allColours[k][1].off() # Turn colour clock low
+
+        allColours[3][1].off() # Turn ground clock low
+
+    for i in range(4):
+        allColours[i][2].on() # Turn all latch high
+    
 # ------------------------------------------------------- TCP Listening -------------------------------------------------------
 # Create TCP socket
 tcpSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
