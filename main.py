@@ -3,6 +3,20 @@ import select
 import sys
 import time
 import re
+from gpiozero import LED
+
+# 0 is serial, 1 is clock, 2 is latch
+red = [LED(2), LED(3), LED(4)]
+green = [LED(17), LED(27), LED(22)]
+blue = [LED(10), LED(9), LED(11)]
+ground = [LED(5), LED(6), LED(13)]
+
+for i in range(3):
+    red[i].off()
+    green[i].off()
+    blue[i].off()
+    ground[i].off()
+
 
 # Code executed to listen to port 4000 on the localhost (127.0.0.1)
 # Listens to commands in format /?find=NAME, /?add=NAME:AMOUNT, /?take=NAME:AMOUNT
@@ -11,7 +25,7 @@ import re
 
 # -------------------------------------------------- Initialising Variables ---------------------------------------------------
 # Setting some global constants
-fileName = "parts.txt"
+fileName = "/home/pi/Desktop/ElectronicsBox/Electronic-Electrical-Parts-Box/parts.txt"
 maxReadSize = 1024
 tcpPort = 25000
 tcpAddress = "0.0.0.0"
