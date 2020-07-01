@@ -13,11 +13,26 @@ import re
 # Setting some global constants
 fileName = "parts.txt"
 maxReadSize = 1024
-tcpPort = 4000
+tcpPort = 25000
+tcpAddress = "0.0.0.0"
 
 httpHeaders = "HTTP/1.1 200 OK\nContent-Type: text/html\nConnection: Closed\n\n"
-htmlHeader = "<html>\n<body>\n<h1>\n"
-htmlTail = "\n</h1>\n</body>\n</html>\n"
+
+preBody = """  <head>
+    <title>Electronic Electrical Parts Box</title>
+    <style>
+      table,
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid black;
+        border-collapse: collapse;
+      }
+    </style>
+  </head>"""
+
+htmlHeader = "<html>\n" + preBody + "\n<body>\n<h1>"
+htmlTail = "\n</body>\n</html>\n"
 
 # Initialise empty 8x8 array
 parts = []
@@ -54,14 +69,25 @@ def uploadChanges():
     partsFile.close()
 
 def sendAndClose(message, sock):
-    sock.send((httpHeaders + htmlHeader + message + htmlTail).encode('utf-8'))
+    sock.send((httpHeaders + htmlHeader + message + "</h1>" + buildTable() + htmlTail).encode('utf-8'))
     sock.close()
 
+def buildTable():
+    returnTable = "\n\t<table>\n"
+    
+    for i in range(len(parts)):
+        returnTable += "\t\t<tr>\n"
+        for j in range(len(parts[i])):
+            returnTable += "\t\t\t<th>" + '<a href="/?find=' + parts[i][j][0] + '">' + parts[i][j][0] + '</a>' + ": " + str(parts[i][j][1]) + "</th>\n"
+        returnTable += "\t\t</tr>\n"
+    returnTable += "\t</table>"
+
+    return returnTable
 
 # ------------------------------------------------------- TCP Listening -------------------------------------------------------
 # Create TCP socket
 tcpSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-tcpSock.bind(('localhost', tcpPort))
+tcpSock.bind((tcpAddress, tcpPort))
 tcpSock.listen(1)
 listening = True
 
@@ -80,6 +106,7 @@ while(listening):
         print("We just recieved:", data)
         print("Current Parts:")
         print(parts)
+        
         # --------------------------------------------- We are looking for a part ---------------------------------------------
         if ("GET /?find=" in dataStr):
             partLookingFor = re.search(r'(?<=\?find=)\w+', dataStr).group(0)
@@ -87,16 +114,20 @@ while(listening):
 
             replyX, replyY = "", ""
             found = False
+            foundList = []
             for i in range(8):
                 for j in range(8):
-                    if (parts[i][j][0] == partLookingFor):
-                        replyX, replyY = str(j), str(i)
-                        print("Look in row " + replyX + ", column" + replyY)
+                    if (partLookingFor in parts[i][j][0]):
+                        replyX, replyY = str(j+1), str(i+1)
+                        foundList.append([parts[i][j][0], replyX, replyY])
+                        print("Found in row: " + replyX + ", column: " + replyY)
                         found = True
 
             # Reply and close socket
+            replyMessage = ""
             if (found):
-                replyMessage = "Look in row " + replyX + ", column" + replyY
+                for i in range(len(foundList)):
+                    replyMessage += foundList[i][0] + " is in row: " + foundList[i][1] + ", column: " + foundList[i][2] + "<br>"
             else:
                 replyMessage = "Find failed."
             sendAndClose(replyMessage, clientSock)
@@ -133,7 +164,7 @@ while(listening):
             uploadChanges()
             # Reply and close socket (and text pedantics)
             addS = ""
-            if (partsNow == 1):
+            if (partsNow != 1):
                 addS = "s"
             replyMessage = ""
             if (weveAdded):
@@ -177,20 +208,20 @@ while(listening):
             # Reply and close socket (and text pedantics)
             replyMessage = ""
             addS = ""
-            if (partsNow == 1):
+            if (partsNow != 1):
                 addS = "s"
             if (weveRemoved):
                 replyMessage = "You now have " + str(partsNow) + " " + takePart + addS + "."
             elif (weDontHave):
                 anyS = ["a", ""]
-                if (takeNo == 1):
+                if (takeNo != 1):
                     anyS = ["any", "s"]
                 replyMessage + "You dont have " + anyS[0] + " " + takePart + anyS[1]
             elif (weCantRemove):
                 replyMessage = "You dont have enough, you only have " + str(partsNow) + " " + takePart + addS + "."
 
             sendAndClose(replyMessage, clientSock)
-        
+
         # ---------------------------------------------- We are swapping a part/s ---------------------------------------------
         if ("GET /?swap=" in dataStr):
             swap = re.search(r'(?<=\?swap=)\w+,\w+', dataStr).group(0)

@@ -1,5 +1,5 @@
-resistor20ohm:40,resistor:144,RGB_LED:190,Blue_LED:200,Yellow_LED:200,Green_LED:200,Purple_LED:200,Red_LED:200
-N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
+RedLED:100,BlueLED:100,GreenLED:100,YellowLED:100,PurpleLED:100,RGBLED:100,RFIDSensor:1,SectionDivider:8
+MtoFJumper:40,FtoFJumper:30,MtoMJumper:30,AABattery:6,ProximitySensor:2,DCMotor:10,DCMotor2:10,N/A:0
 N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
 N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
 N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
