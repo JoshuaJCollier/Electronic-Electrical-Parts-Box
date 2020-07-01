@@ -1,7 +1,7 @@
 # Electronic-Electrical-Parts-Box
 Code to run for keeping track of and finding electronic parts in my parts box
 
-Currently its job is to take an input in a webformat, from localhost port 4000, with requests of either find, add or take.
+Currently its job is to take an input in a webformat, from any ip port 25000, with requests of either find, add or take.
 
 Find:
 Provide the name of a part and it will return the position in the box of that particular part, and eventually it will light up that part of the box
@@ -11,6 +11,9 @@ Provide the name of a part and an amount, it will add that amount of that thing 
 
 Take:
 Provide the name of a part and an amount, it will take that amount of that thing from the spreadsheet. (Will light up that slot in a particular colour not sure yet, maybe red)
+
+Swap:
+Provide the name of two parts, and the position of them will swap in the spreadsheet. (Will light up the slots that have moved in blue)
 
 Other things:
 - It will keep track of how much of everything there is
