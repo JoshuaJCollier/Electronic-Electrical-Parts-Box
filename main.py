@@ -99,6 +99,14 @@ def buildTable():
 
     return returnTable
 
+def eightSquare():
+    returnList = []
+    for i in range(8):
+        returnList.append([])
+        for j in range(8):
+            returnList[i].append(0)
+    return returnList
+
 # RGB values are 8x8 list of 0s and 1s
 def updateShiftRegisters(r, g, b):
     allColours = [red, green, blue, ground]
@@ -126,6 +134,7 @@ def updateShiftRegisters(r, g, b):
 
     for i in range(4):
         allColours[i][2].on() # Turn all latch high
+
     
 # ------------------------------------------------------- TCP Listening -------------------------------------------------------
 # Create TCP socket
@@ -133,6 +142,7 @@ tcpSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 tcpSock.bind((tcpAddress, tcpPort))
 tcpSock.listen(1)
 listening = True
+emptyLeds = eightSquare()
 
 buildParts()
 
@@ -155,17 +165,20 @@ while(listening):
             partLookingFor = re.search(r'(?<=\?find=)\w+', dataStr).group(0)
             print("Finding", partLookingFor)
 
+            purpleLeds = eightsquare()
             replyX, replyY = "", ""
             found = False
             foundList = []
             for i in range(8):
                 for j in range(8):
                     if (partLookingFor in parts[i][j][0]):
+                        purpleLeds[i][j] = 1
                         replyX, replyY = str(j+1), str(i+1)
                         foundList.append([parts[i][j][0], replyX, replyY])
                         print("Found in row: " + replyX + ", column: " + replyY)
                         found = True
 
+            updateShiftRegisters(purpleLeds, emptySquare, purpleLeds)
             # Reply and close socket
             replyMessage = ""
             if (found):
@@ -184,6 +197,8 @@ while(listening):
             print("Adding", str(addNo), addPart)
 
             partsNow = 0
+            greenLeds = eightsquare()
+
 
             # We will check if the part is in the list, if so we will add to its total, if
             # not we will add it to the next available slot and give it the amount provided
@@ -193,18 +208,21 @@ while(listening):
                     if (parts[i][j][0] == addPart):
                         parts[i][j][1] += addNo
                         partsNow = parts[i][j][1]
+                        greenLeds[i][j] = 1
                         weveAdded=True
                         break
                     elif (parts[i][j][0] == "N/A"):
                         parts[i][j][0] = addPart
                         parts[i][j][1] += addNo
                         partsNow = parts[i][j][1]
+                        greenLeds[i][j] = 1
                         weveAdded=True
                         break
                 if (weveAdded):
                     break
                 
             uploadChanges()
+            updateShiftRegisters(emptySquare, greenLeds, emptySquare)
             # Reply and close socket (and text pedantics)
             addS = ""
             if (partsNow != 1):
