@@ -10,7 +10,7 @@ from gpiozero import LED
 red = [LED(2), LED(3), LED(4)]
 green = [LED(17), LED(27), LED(22)]
 blue = [LED(10), LED(9), LED(11)]
-ground = [LED(5), LED(6), LED(13)]
+ground = [LED(5), LED(6), LED(13)] # Led 5 doesnt matter because we are connecting it straight to ground
 
 for i in range(3):
     red[i].off()
@@ -110,20 +110,20 @@ def eightSquare():
 # RGB values are 8x8 list of 0s and 1s
 def updateShiftRegisters(r, g, b):
     allColours = [red, green, blue, ground]
+    colours = [r, g, b]
     for i in range(4):
         allColours[i][2].off() # Turn all latch low
     
     for i in range(8):
         allColours[3][1].on() # Turn ground clock high
-        allColours[3][0].on() # Turn ground serial high
-            
+
         for j in range(8):
             
             for k in range(3): # Only for RGB
                 allColours[k][1].on() # Turn colour clock high
-                if (r[i][j] == 1):
+                if (colours[k][i][j] == 1):
                     allColours[k][0].on() # Turn colour serial high
-                else if (r[i][j] == 0):
+                else if (colours[k][i][j] == 0):
                     allColours[k][0].off() # Turn colour serial low
 
             time.sleep(0.1) # Bit of a rest
@@ -243,6 +243,7 @@ while(listening):
             print("Removing", str(takeNo), takePart)
 
             partsNow = 0
+            redLeds = eightsquare()
             
             # We will check if we have any of this part, and we will remove this amout
             # if we have that many
@@ -255,10 +256,12 @@ while(listening):
                         if (parts[i][j][1] >= takeNo):
                             parts[i][j][1] -= takeNo
                             partsNow = parts[i][j][1]
+                            redLeds[i][j] = 1
                             weveRemoved = True
                             break
                         elif (parts[i][j][1] < takeNo):
                             partsNow = parts[i][j][1]
+                            redLeds[i][j] = 1
                             weCantRemove = True
                             break
                 if (weveRemoved or weCantRemove):
@@ -266,6 +269,7 @@ while(listening):
                     break
 
             uploadChanges()
+            updateShiftRegisters(redLeds, emptySquare, emptySquare)
             # Reply and close socket (and text pedantics)
             replyMessage = ""
             addS = ""
@@ -292,6 +296,7 @@ while(listening):
             foundTwo = False
             done = False
             otherPart = []
+            blueLeds = eightsquare()
             for i in range(8):
                 for j in range(8):
                     if (parts[i][j][0] == swap[0]):
@@ -302,10 +307,12 @@ while(listening):
                             parts[otherParti][otherPartj] = parts[i][j]
                             parts[i][j] = buf
                             done = True
+                            blueLeds[i][j] = 1
                         else:
                             # We have found 1, now we have to find the other
                             foundOne = True
                             otherPart = [i,j]
+                            blueLeds[i][j] = 1
                     elif (parts[i][j][0] == swap[1]):
                         if (foundOne):
                             otherParti = otherPart[0]
@@ -314,14 +321,17 @@ while(listening):
                             parts[otherParti][otherPartj] = parts[i][j]
                             parts[i][j] = buf
                             done = True
+                            blueLeds[i][j] = 1
                         else:
                             # We have found 1, now we have to find the other
                             foundTwo = True
                             otherPart = [i,j]
+                            blueLeds[i][j] = 1
                 if (done):
                     break
             
             uploadChanges()
+            updateShiftRegisters(emptySquare, emptySquare, blueLeds)
             # Reply and close socket (and text pedantics)
             replyMessage = ""
             if (done):
