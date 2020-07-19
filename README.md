@@ -1,4 +1,6 @@
 # Electronic-Electrical-Parts-Box
+IMPORTANT: curl ifconfig.me to find ip address
+IMPORTANT: ssh pi@pislocalip to ssh in
 Code to run for keeping track of and finding electronic parts in my parts box
 
 Currently its job is to take an input in a webformat, from any ip port 25000, with requests of either find, add or take.

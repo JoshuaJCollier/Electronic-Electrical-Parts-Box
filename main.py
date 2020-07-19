@@ -123,7 +123,7 @@ def updateShiftRegisters(r, g, b):
                 allColours[k][1].on() # Turn colour clock high
                 if (r[i][j] == 1):
                     allColours[k][0].on() # Turn colour serial high
-                else if (r[i][j] == 0):
+                elif (r[i][j] == 0):
                     allColours[k][0].off() # Turn colour serial low
 
             time.sleep(0.1) # Bit of a rest
@@ -165,7 +165,7 @@ while(listening):
             partLookingFor = re.search(r'(?<=\?find=)\w+', dataStr).group(0)
             print("Finding", partLookingFor)
 
-            purpleLeds = eightsquare()
+            purpleLeds = eightSquare()
             replyX, replyY = "", ""
             found = False
             foundList = []
@@ -178,7 +178,7 @@ while(listening):
                         print("Found in row: " + replyX + ", column: " + replyY)
                         found = True
 
-            updateShiftRegisters(purpleLeds, emptySquare, purpleLeds)
+            updateShiftRegisters(purpleLeds, emptyLeds, purpleLeds)
             # Reply and close socket
             replyMessage = ""
             if (found):
@@ -197,7 +197,7 @@ while(listening):
             print("Adding", str(addNo), addPart)
 
             partsNow = 0
-            greenLeds = eightsquare()
+            greenLeds = eightSquare()
 
 
             # We will check if the part is in the list, if so we will add to its total, if
@@ -222,7 +222,7 @@ while(listening):
                     break
                 
             uploadChanges()
-            updateShiftRegisters(emptySquare, greenLeds, emptySquare)
+            updateShiftRegisters(emptyLeds, greenLeds, emptyLeds)
             # Reply and close socket (and text pedantics)
             addS = ""
             if (partsNow != 1):
