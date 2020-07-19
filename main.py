@@ -123,7 +123,7 @@ def updateShiftRegisters(r, g, b):
                 allColours[k][1].on() # Turn colour clock high
                 if (colours[k][i][j] == 1):
                     allColours[k][0].on() # Turn colour serial high
-                elif (colours[i][j] == 0):
+                elif (colours[k][i][j] == 0):
                     allColours[k][0].off() # Turn colour serial low
 
             time.sleep(0.1) # Bit of a rest
