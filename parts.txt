@@ -1,8 +1,8 @@
 RedLED:100,BlueLED:100,GreenLED:100,YellowLED:100,PurpleLED:100,RGBLED:100,RFIDSensor:1,SectionDivider:8
-MtoFJumper:40,FtoFJumper:30,MtoMJumper:30,AABattery:6,ProximitySensor:2,DCMotor:10,DCMotor2:10,N/A:0
-N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
-N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
-N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
-N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
+MtoFJumper:26,FtoFJumper:30,MtoMJumper:20,AABattery:6,ProximitySensor:2,DCMotor:10,DCMotor2:10,DCMotorAlt:4
+BatteryHolder:2,Gyroaccelerometer:2,UltrasonicSensor:2,ArduinoNano:1,DiffusedRGBLED:50,DigitLED:6,Capacitor1uF:10,Capacitor2u2F:10
+Capacitor3u3F:10,Capacitor4u7F:10,Capacitor10uF:10,Capacitor22uF:10,Capacitor33uF:10,Capacitor47uF:10,Capacitor100uF:10,Capacitor220uF:10
+Capacitor330uF:10,Capacitor470uF:10,AssortedCeramicCapacitors:100,AssortedTransistors:50,Resistors10to100:60,Resistors100to1k:180,Resistors1kto10k:140,Resistors10kto100k:100
+Resistors100kto1M:120,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
 N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0
 N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0,N/A:0

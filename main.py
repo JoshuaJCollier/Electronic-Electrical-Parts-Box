@@ -100,17 +100,14 @@ def buildTable():
     return returnTable
 
 def eightSquare():
-    returnList = []
-    for i in range(8):
-        returnList.append([])
-        for j in range(8):
-            returnList[i].append(0)
+    returnList = [[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0]]
     return returnList
 
 # RGB values are 8x8 list of 0s and 1s
 def updateShiftRegisters(r, g, b):
     allColours = [red, green, blue, ground]
     colours = [r, g, b]
+    
     for i in range(4):
         allColours[i][2].off() # Turn all latch low
     
@@ -134,7 +131,7 @@ def updateShiftRegisters(r, g, b):
 
     for i in range(4):
         allColours[i][2].on() # Turn all latch high
-
+    
     
 # ------------------------------------------------------- TCP Listening -------------------------------------------------------
 # Create TCP socket
