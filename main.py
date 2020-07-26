@@ -112,23 +112,25 @@ def updateShiftRegisters(r, g, b):
         allColours[i][2].off() # Turn all latch low
     
     for i in range(8):
-        allColours[3][1].on() # Turn ground clock high
+        allColours[3][1].off() # Turn ground clock high
 
         for j in range(8):
             
             for k in range(3): # Only for RGB
-                allColours[k][1].on() # Turn colour clock high
+                allColours[k][1].off() # Turn colour clock low
                 if (colours[k][i][j] == 1):
                     allColours[k][0].on() # Turn colour serial high
                 elif (colours[k][i][j] == 0):
                     allColours[k][0].off() # Turn colour serial low
-
-            time.sleep(0.1) # Bit of a rest
+                allColours[k][1].on() # Turn colour clock high
+            time.sleep(0.01) # Bit of a rest
             for k in range(3):
                 allColours[k][1].off() # Turn colour clock low
+            time.sleep(0.01) # Bit of a rest
 
-        allColours[3][1].off() # Turn ground clock low
-
+        allColours[3][1].on() # Turn ground clock low
+        time.sleep(0.01)
+        allColours[3][1].off()
     for i in range(4):
         allColours[i][2].on() # Turn all latch high
     
@@ -145,6 +147,7 @@ buildParts()
 
 # On the webpage we will generate it from the partsFile, which will allow you to take,
 # add or find parts with simple buttons in a html page 
+print("Server online. Awaiting requests...")
 while(listening):
     clientSock, address = tcpSock.accept()
     
@@ -153,9 +156,9 @@ while(listening):
     
     if data:
         print("Client Accepted")
-        print("We just recieved:", data)
-        print("Current Parts:")
-        print(parts)
+        print("We just recieved:", data[0:16])
+        #print("Current Parts:")
+        #print(parts)
         
         # --------------------------------------------- We are looking for a part ---------------------------------------------
         if ("GET /?find=" in dataStr):
@@ -176,6 +179,7 @@ while(listening):
                         found = True
 
             updateShiftRegisters(purpleLeds, emptyLeds, purpleLeds)
+            print(purpleLeds)
             # Reply and close socket
             replyMessage = ""
             if (found):
