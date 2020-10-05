@@ -5,18 +5,39 @@ import time
 import re
 from gpiozero import LED
 
+import RPi.GPIO as GPIO
+
 # Initialising Pins
 # 0 is serial, 1 is clock, 2 is latch
-red = [LED(2), LED(3), LED(4)]
-green = [LED(17), LED(27), LED(22)]
-blue = [LED(10), LED(9), LED(11)]
-ground = [LED(5), LED(6), LED(13)] # Led 5 doesnt matter because we are connecting it straight to ground
 
-for i in range(3):
-    red[i].off()
-    green[i].off()
-    blue[i].off()
-    ground[i].off()
+GPIO.setmode(GPIO.BCM)
+RED_PIN_DATA  = 2
+RED_PIN_LATCH = 4
+RED_PIN_CLOCK = 3
+GPIO.setup(RED_PIN_DATA,  GPIO.OUT)
+GPIO.setup(RED_PIN_LATCH, GPIO.OUT)
+GPIO.setup(RED_PIN_CLOCK, GPIO.OUT)
+
+GREEN_PIN_DATA  = 17
+GREEN_PIN_LATCH = 22
+GREEN_PIN_CLOCK = 27
+GPIO.setup(GREEN_PIN_DATA,  GPIO.OUT)
+GPIO.setup(GREEN_PIN_LATCH, GPIO.OUT)
+GPIO.setup(GREEN_PIN_CLOCK, GPIO.OUT)
+
+BLUE_PIN_DATA  = 10
+BLUE_PIN_LATCH = 11
+BLUE_PIN_CLOCK = 9
+GPIO.setup(BLUE_PIN_DATA,  GPIO.OUT)
+GPIO.setup(BLUE_PIN_LATCH, GPIO.OUT)
+GPIO.setup(BLUE_PIN_CLOCK, GPIO.OUT)
+
+GROUND_PIN_DATA  = 5
+GROUND_PIN_LATCH = 13
+GROUND_PIN_CLOCK = 6
+GPIO.setup(GROUND_PIN_DATA,  GPIO.OUT)
+GPIO.setup(GROUND_PIN_LATCH, GPIO.OUT)
+GPIO.setup(GROUND_PIN_CLOCK, GPIO.OUT)
 
 
 # Code executed to listen to port 4000 on the localhost (127.0.0.1)
@@ -105,34 +126,43 @@ def eightSquare():
 
 # RGB values are 8x8 list of 0s and 1s
 def updateShiftRegisters(r, g, b):
-    allColours = [red, green, blue, ground]
-    colours = [r, g, b]
-    
-    for i in range(4):
-        allColours[i][2].off() # Turn all latch low
-    
-    for i in range(8):
-        allColours[3][1].off() # Turn ground clock high
 
-        for j in range(8):
-            
-            for k in range(3): # Only for RGB
-                allColours[k][1].off() # Turn colour clock low
-                if (colours[k][i][j] == 1):
-                    allColours[k][0].on() # Turn colour serial high
-                elif (colours[k][i][j] == 0):
-                    allColours[k][0].off() # Turn colour serial low
-                allColours[k][1].on() # Turn colour clock high
-            time.sleep(0.01) # Bit of a rest
-            for k in range(3):
-                allColours[k][1].off() # Turn colour clock low
-            time.sleep(0.01) # Bit of a rest
+    # Ground
+    ground = sum(d * 2**i for i, d in enumerate(r[::-1])) 
+    GPIO.output(GROUND_PIN_LATCH, 0)
+    for y in range(8):
+        # Red
+        red = sum(d * 2**i for i, d in enumerate(r[::-1])) 
+        GPIO.output(RED_PIN_LATCH, 0)
+        for x in range(8):
+            GPIO.output(RED_PIN_DATA, (red[y] >> x) & 1)
+            GPIO.output(RED_PIN_CLOCK, 1)
+            GPIO.output(RED_PIN_CLOCK, 0)
+        GPIO.output(RED_PIN_LATCH, 1)
 
-        allColours[3][1].on() # Turn ground clock low
-        time.sleep(0.01)
-        allColours[3][1].off()
-    for i in range(4):
-        allColours[i][2].on() # Turn all latch high
+        # Green
+        green = sum(d * 2**i for i, d in enumerate(r[::-1])) 
+        GPIO.output(GREEN_PIN_LATCH, 0)
+        for x in range(8):
+            GPIO.output(GREEN_PIN_DATA, (green[y] >> x) & 1)
+            GPIO.output(GREEN_PIN_CLOCK, 1)
+            GPIO.output(GREEN_PIN_CLOCK, 0)
+        GPIO.output(GREEN_PIN_LATCH, 1)
+
+        # Blue
+        blue = sum(d * 2**i for i, d in enumerate(r[::-1])) 
+        GPIO.output(BLUE_PIN_LATCH, 0)
+        for x in range(8):
+            GPIO.output(BLUE_PIN_DATA, (blue[y] >> x) & 1)
+            GPIO.output(BLUE_PIN_CLOCK, 1)
+            GPIO.output(BLUE_PIN_CLOCK, 0)
+        GPIO.output(BLUE_PIN_LATCH, 1)
+    
+        GPIO.output(GROUND_PIN_DATA, (0b11111111 >> x) & 1)
+        GPIO.output(GROUND_PIN_CLOCK, 1)
+        GPIO.output(GROUND_PIN_CLOCK, 0)
+    GPIO.output(GROUND_PIN_LATCH, 1)
+    
     
     
 # ------------------------------------------------------- TCP Listening -------------------------------------------------------
