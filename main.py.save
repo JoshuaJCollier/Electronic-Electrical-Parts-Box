@@ -5,7 +5,6 @@ import time
 import re
 
 import RPi.GPIO as GPIO
-from multiprocessing import Process
 
 # Initialising Pins
 # 0 is serial, 1 is clock, 2 is latch
@@ -39,7 +38,7 @@ GPIO.setup(GROUND_PIN_DATA,  GPIO.OUT)
 GPIO.setup(GROUND_PIN_LATCH, GPIO.OUT)
 GPIO.setup(GROUND_PIN_CLOCK, GPIO.OUT)
 
-secondsOn = 2
+
 # Code executed to listen to port 4000 on the localhost (127.0.0.1)
 # Listens to commands in format /?find=NAME, /?add=NAME:AMOUNT, /?take=NAME:AMOUNT
 # There is a linked html file that sorts our interaction
@@ -126,43 +125,43 @@ def eightSquare():
 
 # RGB values are 8x8 list of 0s and 1s
 def updateShiftRegisters(r, g, b):
+
     startTime = time.time()
 
-    while(time.time() - startTime < secondsOn):
-        # Ground
-        GPIO.output(GROUND_PIN_LATCH, 0)
-        for y in range(8):
-            # Red
-            red = sum(d * 2**i for i, d in enumerate(r[y][::-1])) 
-            GPIO.output(RED_PIN_LATCH, 0)
-            for x in range(8):
-                GPIO.output(RED_PIN_DATA, (red >> x) & 1)
-                GPIO.output(RED_PIN_CLOCK, 1)
-                GPIO.output(RED_PIN_CLOCK, 0)
-            GPIO.output(RED_PIN_LATCH, 1)
+    while(time.time() - startTime < 2):
+	    # Ground
+	    GPIO.output(GROUND_PIN_LATCH, 0)
+	    for y in range(8):
+	        # Red
+	        red = sum(d * 2**i for i, d in enumerate(r[y][::-1])) 
+	        GPIO.output(RED_PIN_LATCH, 0)
+	        for x in range(8):
+	            GPIO.output(RED_PIN_DATA, (red >> x) & 1)
+	            GPIO.output(RED_PIN_CLOCK, 1)
+	            GPIO.output(RED_PIN_CLOCK, 0)
+	        GPIO.output(RED_PIN_LATCH, 1)
 
-            # Green
-            green = sum(d * 2**i for i, d in enumerate(g[y][::-1])) 
-            GPIO.output(GREEN_PIN_LATCH, 0)
-            for x in range(8):
-                GPIO.output(GREEN_PIN_DATA, (green >> x) & 1)
-                GPIO.output(GREEN_PIN_CLOCK, 1)
-                GPIO.output(GREEN_PIN_CLOCK, 0)
-            GPIO.output(GREEN_PIN_LATCH, 1)
+	        # Green
+	        green = sum(d * 2**i for i, d in enumerate(g[y][::-1])) 
+	        GPIO.output(GREEN_PIN_LATCH, 0)
+	        for x in range(8):
+	            GPIO.output(GREEN_PIN_DATA, (green >> x) & 1)
+	            GPIO.output(GREEN_PIN_CLOCK, 1)
+	            GPIO.output(GREEN_PIN_CLOCK, 0)
+	        GPIO.output(GREEN_PIN_LATCH, 1)
 
-            # Blue
-            blue = sum(d * 2**i for i, d in enumerate(b[y][::-1])) 
-            GPIO.output(BLUE_PIN_LATCH, 0)
-            for x in range(8):
-                GPIO.output(BLUE_PIN_DATA, (blue >> x) & 1)
-                GPIO.output(BLUE_PIN_CLOCK, 1)
-                GPIO.output(BLUE_PIN_CLOCK, 0)
-            GPIO.output(BLUE_PIN_LATCH, 1)
-    
-            GPIO.output(GROUND_PIN_DATA, (0b11111111 >> x) & 0)
-            GPIO.output(GROUND_PIN_CLOCK, 1)
-            GPIO.output(GROUND_PIN_CLOCK, 0)
-        GPIO.output(GROUND_PIN_LATCH, 1)
+	        # Blue
+	        blue = sum(d * 2**i for i, d in enumerate(b[y][::-1])) 
+	        GPIO.output(BLUE_PIN_LATCH, 0)
+	        for x in range(8):
+	            GPIO.output(BLUE_PIN_DATA, (blue >> x) & 1)
+	            GPIO.output(BLUE_PIN_CLOCK, 1)
+	            GPIO.output(BLUE_PIN_CLOCK, 0)
+	        GPIO.output(BLUE_PIN_LATCH, 1)
+	    
+	        GPIO.output(GROUND_PIN_DATA, (0b11111111 >> x) & 1)
+	        GPIO.output(GROUND_PIN_CLOCK, 1        GPIO.output(GROUND_PIN_CLOCK, 0)
+	GPIO.output(GROUND_PIN_LATCH, 1)
     
     
     
@@ -209,7 +208,7 @@ while(listening):
                         print("Found in row: " + replyX + ", column: " + replyY)
                         found = True
 
-            Process(target=updateShiftRegisters, args=(purpleLeds, emptyLeds, purpleLeds)).start()
+            updateShiftRegisters(purpleLeds, emptyLeds, purpleLeds)
             print(purpleLeds)
             # Reply and close socket
             replyMessage = ""
@@ -254,7 +253,7 @@ while(listening):
                     break
                 
             uploadChanges()
-            Process(target=updateShiftRegisters, args=(emptyLeds, greenLeds, emptyLeds)).start()
+            updateShiftRegisters(emptyLeds, greenLeds, emptyLeds)
             # Reply and close socket (and text pedantics)
             addS = ""
             if (partsNow != 1):
