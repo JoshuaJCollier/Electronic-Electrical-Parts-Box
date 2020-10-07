@@ -3,6 +3,7 @@ import select
 import sys
 import time
 import re
+import numpy as np
 
 import RPi.GPIO as GPIO
 from multiprocessing import Process
@@ -67,7 +68,7 @@ preBody = """  <head>
     </style>
   </head>"""
 
-htmlHeader = "<html>\n" + preBody + "\n<body>\n<h1>"
+htmlHeader = "<html>\n" + preBody + "\n<body>\n"
 htmlTail = "\n</body>\n</html>\n"
 
 # Initialise empty 8x8 array
@@ -105,7 +106,7 @@ def uploadChanges():
     partsFile.close()
 
 def sendAndClose(message, sock):
-    sock.send((httpHeaders + htmlHeader + message + "</h1>" + buildTable() + htmlTail).encode('utf-8'))
+    sock.send((httpHeaders + htmlHeader + buildTable() + "<h1>" + message + "</h1>" + htmlTail).encode('utf-8'))
     sock.close()
 
 def buildTable():
@@ -126,17 +127,45 @@ def eightSquare():
 
 # RGB values are 8x8 list of 0s and 1s
 def updateShiftRegisters(r, g, b):
+    r = np.array(r).T.tolist()
     startTime = time.time()
-
+    
+    z = 0
     while(time.time() - startTime < secondsOn):
+        z += 1
         # Ground
-        GPIO.output(GROUND_PIN_LATCH, 0)
+        #GPIO.output(GROUND_PIN_LATCH, 0)
+
         for y in range(8):
+            GPIO.output(GROUND_PIN_LATCH, 0)
+            for x in range(8):
+                if (x == (7-y)):
+                    GPIO.output(GROUND_PIN_DATA, 0)
+                else:
+                    GPIO.output(GROUND_PIN_DATA, 1)
+                GPIO.output(GROUND_PIN_CLOCK, 1)
+                GPIO.output(GROUND_PIN_CLOCK, 0)
+                if (z == 1 and x == (8-y)):
+                    print("Ground: 0")
+                elif (z == 1):
+                    print("Ground: 1")
+            GPIO.output(GROUND_PIN_LATCH, 1)
+
             # Red
             red = sum(d * 2**i for i, d in enumerate(r[y][::-1])) 
             GPIO.output(RED_PIN_LATCH, 0)
             for x in range(8):
                 GPIO.output(RED_PIN_DATA, (red >> x) & 1)
+                GPIO.output(RED_PIN_CLOCK, 1)
+                GPIO.output(RED_PIN_CLOCK, 0)
+                if (z == 1):
+                    print("Red: " + str((red >> x) & 1))
+            GPIO.output(RED_PIN_LATCH, 1)
+            
+            # Red Reset
+            GPIO.output(RED_PIN_LATCH, 0)
+            for x in range(8):
+                GPIO.output(RED_PIN_DATA, 0)
                 GPIO.output(RED_PIN_CLOCK, 1)
                 GPIO.output(RED_PIN_CLOCK, 0)
             GPIO.output(RED_PIN_LATCH, 1)
@@ -148,6 +177,16 @@ def updateShiftRegisters(r, g, b):
                 GPIO.output(GREEN_PIN_DATA, (green >> x) & 1)
                 GPIO.output(GREEN_PIN_CLOCK, 1)
                 GPIO.output(GREEN_PIN_CLOCK, 0)
+                if (z == 1):
+                    print("Green: " + str((green >> x) & 1))
+            GPIO.output(GREEN_PIN_LATCH, 1)
+            
+            # Green Reset
+            GPIO.output(GREEN_PIN_LATCH, 0)
+            for x in range(8):
+                GPIO.output(GREEN_PIN_DATA, 0)
+                GPIO.output(GREEN_PIN_CLOCK, 1)
+                GPIO.output(GREEN_PIN_CLOCK, 0)
             GPIO.output(GREEN_PIN_LATCH, 1)
 
             # Blue
@@ -157,12 +196,25 @@ def updateShiftRegisters(r, g, b):
                 GPIO.output(BLUE_PIN_DATA, (blue >> x) & 1)
                 GPIO.output(BLUE_PIN_CLOCK, 1)
                 GPIO.output(BLUE_PIN_CLOCK, 0)
+                if (z == 1):
+                    print("Blue: " + str((blue >> x) & 1))
             GPIO.output(BLUE_PIN_LATCH, 1)
-    
-            GPIO.output(GROUND_PIN_DATA, (0b11111111 >> x) & 0)
-            GPIO.output(GROUND_PIN_CLOCK, 1)
-            GPIO.output(GROUND_PIN_CLOCK, 0)
-        GPIO.output(GROUND_PIN_LATCH, 1)
+            
+            # Blue Reset
+            GPIO.output(BLUE_PIN_LATCH, 0)
+            for x in range(8):
+                GPIO.output(BLUE_PIN_DATA, 0)
+                GPIO.output(BLUE_PIN_CLOCK, 1)
+                GPIO.output(BLUE_PIN_CLOCK, 0)
+            GPIO.output(BLUE_PIN_LATCH, 1)
+            
+            # Ground Reset
+            GPIO.output(GROUND_PIN_LATCH, 0)
+            for x in range(8):
+                GPIO.output(GROUND_PIN_DATA, 0)
+                GPIO.output(GROUND_PIN_CLOCK, 1)
+                GPIO.output(GROUND_PIN_CLOCK, 0)
+            GPIO.output(GROUND_PIN_LATCH, 1)
     
     
     
