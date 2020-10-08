@@ -128,6 +128,9 @@ def eightSquare():
 # RGB values are 8x8 list of 0s and 1s
 def updateShiftRegisters(r, g, b):
     r = np.array(r).T.tolist()
+    g = np.array(g).T.tolist()
+    b = np.array(b).T.tolist()
+
     startTime = time.time()
     
     z = 0
@@ -152,7 +155,7 @@ def updateShiftRegisters(r, g, b):
             GPIO.output(GROUND_PIN_LATCH, 1)
 
             # Red
-            red = sum(d * 2**i for i, d in enumerate(r[y][::-1])) 
+            red = sum(d * 2**i for i, d in enumerate(r[7-y][::-1])) 
             GPIO.output(RED_PIN_LATCH, 0)
             for x in range(8):
                 GPIO.output(RED_PIN_DATA, (red >> x) & 1)
@@ -171,7 +174,7 @@ def updateShiftRegisters(r, g, b):
             GPIO.output(RED_PIN_LATCH, 1)
 
             # Green
-            green = sum(d * 2**i for i, d in enumerate(g[y][::-1])) 
+            green = sum(d * 2**i for i, d in enumerate(g[7-y][::-1])) 
             GPIO.output(GREEN_PIN_LATCH, 0)
             for x in range(8):
                 GPIO.output(GREEN_PIN_DATA, (green >> x) & 1)
@@ -190,7 +193,7 @@ def updateShiftRegisters(r, g, b):
             GPIO.output(GREEN_PIN_LATCH, 1)
 
             # Blue
-            blue = sum(d * 2**i for i, d in enumerate(b[y][::-1])) 
+            blue = sum(d * 2**i for i, d in enumerate(b[7-y][::-1])) 
             GPIO.output(BLUE_PIN_LATCH, 0)
             for x in range(8):
                 GPIO.output(BLUE_PIN_DATA, (blue >> x) & 1)
