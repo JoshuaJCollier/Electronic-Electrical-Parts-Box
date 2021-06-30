@@ -190,6 +190,34 @@ while(listening):
         #print("Current Parts:")
         #print(parts)
         
+        # ------------------------------------------------- When you are bored ------------------------------------------------
+        if ("GET /?lightUp" in dataStr):
+            #partLookingFor = re.search(r'(?<=\?find=)\w+', dataStr).group(0)
+            print("Lighting Up")
+
+            while():
+                redOne = eightSquare()
+                redOne[0] = [1, 1, 1, 1, 1, 1, 1, 1]
+                greenOne = eightSquare()
+                greenOne[1] = [1, 1, 1, 1, 1, 1, 1, 1]
+                blueOne = eightSquare()
+                blueOne[2] = [1, 1, 1, 1, 1, 1, 1, 1]
+                for i in range(8):
+                    redOne[i % 8] = [1, 1, 1, 1, 1, 1, 1, 1]
+                    greenOne[i+1 % 8] = [1, 1, 1, 1, 1, 1, 1, 1]
+                    blueOne[i+2 % 8] = [1, 1, 1, 1, 1, 1, 1, 1]
+                    updateShiftRegisters(redOne, greenOne, blueOne)
+                    time.sleep(2)
+                    redOne[i-1 % 8] = [0, 0, 0, 0, 0, 0, 0, 0]
+                    greenOne[i % 8] = [0, 0, 0, 0, 0, 0, 0, 0]
+                    blueOne[i+1 % 8] = [0, 0, 0, 0, 0, 0, 0, 0]
+                    updateShiftRegisters(redOne, greenOne, blueOne)
+                    time.sleep(2)
+
+
+            replyMessage = "Lets go"
+            sendAndClose(replyMessage, clientSock)
+        
         # --------------------------------------------- We are looking for a part ---------------------------------------------
         if ("GET /?find=" in dataStr):
             partLookingFor = re.search(r'(?<=\?find=)\w+', dataStr).group(0)
@@ -315,7 +343,6 @@ while(listening):
                 replyMessage + "You dont have " + anyS[0] + " " + takePart + anyS[1]
             elif (weCantRemove):
                 replyMessage = "You dont have enough, you only have " + str(partsNow) + " " + takePart + addS + "."
-
             sendAndClose(replyMessage, clientSock)
 
         # ---------------------------------------------- We are swapping a part/s ---------------------------------------------
@@ -370,6 +397,8 @@ while(listening):
             else:
                 replyMessage = "Swap failed."
             sendAndClose(replyMessage, clientSock) 
+            
+            
 
     else:
         print("Closing client socket")
