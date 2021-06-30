@@ -40,7 +40,7 @@ GPIO.setup(GROUND_PIN_DATA,  GPIO.OUT)
 GPIO.setup(GROUND_PIN_LATCH, GPIO.OUT)
 GPIO.setup(GROUND_PIN_CLOCK, GPIO.OUT)
 
-secondsOn = 2
+secondsOn = 0.5
 # Code executed to listen to port 4000 on the localhost (127.0.0.1)
 # Listens to commands in format /?find=NAME, /?add=NAME:AMOUNT, /?take=NAME:AMOUNT
 # There is a linked html file that sorts our interaction
@@ -251,7 +251,7 @@ while(listening):
             #partLookingFor = re.search(r'(?<=\?find=)\w+', dataStr).group(0)
             print("Lighting Up")
 
-            while():
+            while(True):
                 redOne = eightSquare()
                 redOne[0] = [1, 1, 1, 1, 1, 1, 1, 1]
                 greenOne = eightSquare()
@@ -260,15 +260,13 @@ while(listening):
                 blueOne[2] = [1, 1, 1, 1, 1, 1, 1, 1]
                 for i in range(8):
                     redOne[i % 8] = [1, 1, 1, 1, 1, 1, 1, 1]
-                    greenOne[i+1 % 8] = [1, 1, 1, 1, 1, 1, 1, 1]
-                    blueOne[i+2 % 8] = [1, 1, 1, 1, 1, 1, 1, 1]
+                    greenOne[(i+1) % 8] = [1, 1, 1, 1, 1, 1, 1, 1]
+                    blueOne[(i+2) % 8] = [1, 1, 1, 1, 1, 1, 1, 1]
                     updateShiftRegisters(redOne, greenOne, blueOne)
-                    time.sleep(2)
-                    redOne[i-1 % 8] = [0, 0, 0, 0, 0, 0, 0, 0]
+                    redOne[(i-1) % 8] = [0, 0, 0, 0, 0, 0, 0, 0]
                     greenOne[i % 8] = [0, 0, 0, 0, 0, 0, 0, 0]
-                    blueOne[i+1 % 8] = [0, 0, 0, 0, 0, 0, 0, 0]
+                    blueOne[(i+1) % 8] = [0, 0, 0, 0, 0, 0, 0, 0]
                     updateShiftRegisters(redOne, greenOne, blueOne)
-                    time.sleep(2)
 
 
             replyMessage = "Lets go"
